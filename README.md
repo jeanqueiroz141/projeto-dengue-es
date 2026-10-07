@@ -13,3 +13,11 @@ contra a dengue, a partir de notificações do SINAN (2025 e 2026) e população
 
 ## Estrutura do projeto
 data/raw (originais, não vão ao GitHub), src (scripts Python), sql, docs, powerbi
+
+## Decisões sobre os dados
+- **Ano do caso = ano do arquivo do SINAN.** Os arquivos são organizados pelo ano
+  epidemiológico dos primeiros sintomas (SEM_PRI): 100% das linhas de DENGBR25 têm
+  SEM_PRI de 2025 e 100% das de DENGBR26 têm de 2026, então os arquivos não se sobrepõem.
+  O arquivo de 2025 inclui notificações de 29-31/12/2024 e de 2026.
+- **Local:** casos por município de **residência** (SG_UF = 32), pois a população do IBGE
+  é de residentes.

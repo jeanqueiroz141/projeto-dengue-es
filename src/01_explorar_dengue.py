@@ -1,6 +1,15 @@
 # %%
+import os
 from pathlib import Path
 import pandas as pd
+
+# Sobe as pastas até achar o README.md (a raiz do projeto)
+raiz = Path.cwd()
+while not (raiz / "README.md").exists() and raiz != raiz.parent:
+    raiz = raiz.parent
+assert (raiz / "README.md").exists(), f"Não achei a raiz a partir de {Path.cwd()}"
+os.chdir(raiz)
+print("Raiz do projeto:", Path.cwd())
 
 RAW = Path("data/raw/sinan")
 ARQUIVOS = {2025: RAW / "DENGBR25.csv", 2026: RAW / "DENGBR26.csv"}
