@@ -1,0 +1,5 @@
+data/
+_apoio/
+*.db
+*.sqlite
+__pycache__/
