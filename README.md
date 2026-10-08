@@ -11,8 +11,11 @@ contra a dengue, a partir de notificações do SINAN (2025 e 2026) e população
 | IBGE, estimativa 2025 | POP2025_20260828.xls | (preencha) | https://www.ibge.gov.br/estatisticas/sociais/populacao/9103-estimativas-de-populacao.html |
 | IBGE, estimativa 2026 | estimativa_dou_2026.xlsx | (preencha) | mesma página |
 
-## Estrutura do projeto
-data/raw (originais, não vão ao GitHub), src (scripts Python), sql, docs, powerbi
+## Estrutura
+- data/: arquivos originais do SINAN e do IBGE e CSVs tratados (não versionados)
+- 01_tratamento.py: leitura, filtro do ES e limpeza com pandas
+- sql/: consultas de análise
+- docs/diario.md: diário do projeto
 
 ## Decisões sobre os dados
 - **Ano do caso = ano do arquivo do SINAN.** Os arquivos são organizados pelo ano

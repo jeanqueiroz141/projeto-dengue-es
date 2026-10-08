@@ -18,3 +18,11 @@
   29-31/12/2024 e 7.058 notificadas em 2026, todas com sintomas no ano epidemiológico 2025.
 - Decisão e motivo: ano do caso = ano do arquivo (ano epidemiológico do 1º sintoma);
   curva semanal por SEM_PRI. Assim os arquivos não se sobrepõem.
+
+## 2026-10-07: simplificação do projeto
+- O que fiz: reduzi o tratamento a um único script em pandas e achatei as pastas.
+- O que descobri: CLASSI_FIN tem os códigos 0 e 8, que o dicionário do SINAN (revisão de 2015)
+  não descreve; não há 5 (descartado) nem 13 (chikungunya) nos dados do ES. As semanas de
+  1º sintoma vão de 202501 a 202553 em 2025 e de 202601 a 202638 em 2026.
+- Decisão e motivo: Python só para ler, filtrar, ajustar e traduzir; a análise fica no SQL.
+  A chave dos municípios é o código de 6 dígitos (texto) nas duas tabelas.
