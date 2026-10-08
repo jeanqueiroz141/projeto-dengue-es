@@ -76,6 +76,7 @@ populacao = pd.concat([ler_pop("data/POP2025_20260828.xls", 2025),
                        ler_pop("data/estimativa_dou_2026.xlsx", 2026)], ignore_index=True)
 print(populacao.shape)
 
+populacao["populacao"] = populacao["populacao"].astype(int)
 # %%
 
 populacao

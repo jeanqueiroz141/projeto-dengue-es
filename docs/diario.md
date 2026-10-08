@@ -26,3 +26,9 @@
   1º sintoma vão de 202501 a 202553 em 2025 e de 202601 a 202638 em 2026.
 - Decisão e motivo: Python só para ler, filtrar, ajustar e traduzir; a análise fica no SQL.
   A chave dos municípios é o código de 6 dígitos (texto) nas duas tabelas.
+
+## 2026-10-07: tratamento concluído
+- O que fiz: rodei o 01_tratamento.py, que gerou data/dengue_es.csv (casos do ES, 2025 e 2026) e data/populacao_es.csv (população do IBGE por município e ano).
+- O que descobri: os 78 municípios dos casos existem todos na tabela de população, e o código de 6 dígitos (texto) funciona como chave entre as duas.
+- Decisão e motivo: Python faz a preparação (ler, filtrar, tipos, tradução de códigos);
+  as colunas novas e os indicadores serão feitos em SQL.
