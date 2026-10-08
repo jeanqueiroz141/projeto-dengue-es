@@ -38,3 +38,19 @@
 - O que descobri: a importação associa colunas por posição e o campo inteiro não aceita "34.0",
   então a ordem das colunas e o tipo da idade foram ajustados antes de exportar.
 - Decisão e motivo: PostgreSQL em vez de SQLite porque o Power BI tem conector nativo.
+
+## 2026-10-07: dados no PostgreSQL
+- O que fiz: importei os CSVs para dengue.casos (53.735 linhas) e dengue.populacao;
+  rodei a primeira consulta de incidência por 100 mil.
+- O que descobri: alguns casos têm "0" em classificacao, criterio e evolucao, sem data de
+  encerramento (provavelmente casos ainda em investigação, a confirmar). As maiores incidências
+  são de municípios pequenos.
+- Decisão e motivo: tratar o "0" no SQL com CASE WHEN; separar os anos nas consultas.
+
+## 2026-10-07 (noite): o que significa o código "0"
+- O que fiz: consultei as combinações de classificacao, criterio e evolucao com código 0.
+- O que descobri: a combinação mais comum (5.198 casos) tem os três campos em 0 e 99% sem data
+  de encerramento (casos abertos). Mas há pelo menos 1.245 casos já classificados como dengue e
+  encerrados com evolução 0 (não preenchida).
+- Decisão e motivo: tratar o 0 como "Não informado" (diferente de "Ignorado", código 9) numa view
+  em SQL; a evolução em branco em casos encerrados entra na análise de qualidade dos dados.
