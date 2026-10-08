@@ -89,10 +89,14 @@ print("Municípios nos casos:", len(casos), "| na população:", len(pop))
 print("Códigos dos casos que não existem na população:", casos - pop)
 
 # %%
+# %%
 # 8) EXPORTAR para o SQL
+dengue["idade_anos"] = dengue["idade_anos"].astype("Int64")   # 34.0 -> 34
+dengue = dengue[["data_notificacao", "data_sintomas", "data_encerramento", "uf_residencia",
+                 "cod_municipio", "sexo", "hospitalizado", "classificacao", "criterio",
+                 "evolucao", "ano", "semana", "idade_anos"]]   # mesma ordem da tabela no SQL
 dengue.to_csv("data/dengue_es.csv", index=False)
 populacao.to_csv("data/populacao_es.csv", index=False)
-
 
 # %%
 

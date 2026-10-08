@@ -24,3 +24,5 @@ contra a dengue, a partir de notificações do SINAN (2025 e 2026) e população
   O arquivo de 2025 inclui notificações de 29-31/12/2024 e de 2026.
 - **Local:** casos por município de **residência** (SG_UF = 32), pois a população do IBGE
   é de residentes.
+
+sql/: criação das tabelas e consultas de análise (PostgreSQL)

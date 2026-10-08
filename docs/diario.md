@@ -32,3 +32,9 @@
 - O que descobri: os 78 municípios dos casos existem todos na tabela de população, e o código de 6 dígitos (texto) funciona como chave entre as duas.
 - Decisão e motivo: Python faz a preparação (ler, filtrar, tipos, tradução de códigos);
   as colunas novas e os indicadores serão feitos em SQL.
+
+## 2026-10-07: banco de dados
+- O que fiz: criei o banco dengue_es no PostgreSQL, com o schema dengue e as tabelas casos e populacao.
+- O que descobri: a importação associa colunas por posição e o campo inteiro não aceita "34.0",
+  então a ordem das colunas e o tipo da idade foram ajustados antes de exportar.
+- Decisão e motivo: PostgreSQL em vez de SQLite porque o Power BI tem conector nativo.
