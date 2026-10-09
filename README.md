@@ -24,3 +24,16 @@ contra a dengue, a partir de notificações do SINAN (2025 e 2026) e população
   O arquivo de 2025 inclui notificações de 29-31/12/2024 e de 2026.
 - **Local:** casos por município de **residência** (SG_UF = 32), pois a população do IBGE
   é de residentes.
+
+## Modelo de dados (PostgreSQL, schema `dengue`)
+| Objeto | Tipo | Chave / regra |
+|---|---|---|
+| `dengue.casos` | tabela | Uma linha por notificação (ES, 2025-2026). Sem chave única: o recorte dos microdados públicos não traz identificador do caso. |
+| `dengue.populacao` | tabela | **Chave primária composta (cod_municipio, ano)**: uma só linha por município e ano. Impede duplicidade e evita que o JOIN multiplique casos. |
+| `dengue.vw_casos` | view | Camada de análise: trata os códigos 0, 8 e nulo e cria faixa etária e situação do caso. |
+
+Relação: `casos (cod_municipio, ano)` com `populacao (cod_municipio, ano)`, usando o código de 6 dígitos do município (texto).
+
+## Onde cada tratamento acontece
+- **Python (pandas):** leitura, filtro do ES, tipos (datas, idade) e tradução dos códigos definidos no dicionário do SINAN.
+- **SQL (view):** interpretações que dependem da análise (códigos 0 e 8) e colunas derivadas. Os dados originais ficam intactos em `dengue.casos`.

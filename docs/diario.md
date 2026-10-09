@@ -61,3 +61,13 @@
 - O que descobri: o código 8 aparece só em casos encerrados, provavelmente "Inconclusivo"
   (fonte secundária). 5.215 casos (cerca de 10%) estão sem classificação.
 - Decisão e motivo: comparar 2025 e 2026 até a semana 38, o limite dos dados de 2026.
+
+## 2026-10-08: primeiros resultados
+- O que fiz: rodei a curva semanal (até a semana 38), o ranking de incidência por ano e a gravidade
+  por faixa etária.
+- O que descobri: 2026 começou mais baixo e a epidemia parece mais tardia; Jerônimo Monteiro,
+  Muniz Freire e Serra aparecem no top 10 dos dois anos; crianças de 0 a 4 anos têm mais
+  hospitalização (8,8%) e 60+ mais alarme ou grave (4,2%). A consulta de incidência trouxe 155
+  linhas porque município sem caso não aparece.
+- Decisão e motivo: o NULL em data_encerramento significa caso aberto e fica como NULL;
+  para o painel, partir da população para incluir municípios com 0 casos.
