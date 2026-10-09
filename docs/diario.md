@@ -47,10 +47,17 @@
   são de municípios pequenos.
 - Decisão e motivo: tratar o "0" no SQL com CASE WHEN; separar os anos nas consultas.
 
-## 2026-10-07 (noite): o que significa o código "0"
+## 2026-10-08: o que significa o código "0"
 - O que fiz: consultei as combinações de classificacao, criterio e evolucao com código 0.
 - O que descobri: a combinação mais comum (5.198 casos) tem os três campos em 0 e 99% sem data
   de encerramento (casos abertos). Mas há pelo menos 1.245 casos já classificados como dengue e
   encerrados com evolução 0 (não preenchida).
 - Decisão e motivo: tratar o 0 como "Não informado" (diferente de "Ignorado", código 9) numa view
   em SQL; a evolução em branco em casos encerrados entra na análise de qualidade dos dados.
+
+## 2026-10-08: view e primeiras análises
+- O que fiz: criei dengue.vw_casos (códigos 0 e nulo como "Não informado", faixa etária e
+  situação aberto/encerrado) e consultas de curva semanal, ranking e gravidade.
+- O que descobri: o código 8 aparece só em casos encerrados, provavelmente "Inconclusivo"
+  (fonte secundária). 5.215 casos (cerca de 10%) estão sem classificação.
+- Decisão e motivo: comparar 2025 e 2026 até a semana 38, o limite dos dados de 2026.
