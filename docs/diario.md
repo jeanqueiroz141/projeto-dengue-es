@@ -71,3 +71,13 @@
   linhas porque município sem caso não aparece.
 - Decisão e motivo: o NULL em data_encerramento significa caso aberto e fica como NULL;
   para o painel, partir da população para incluir municípios com 0 casos.
+
+## 2026-10-09: qualidade, concentração e perguntas de negócio
+- O que fiz: rodei a curva semanal completa, a consulta de municípios sem caso (LEFT JOIN),
+  os casos abertos por ano e o teste da chave primária de dengue.populacao.
+- O que descobri: 2026 acumula 67% dos casos de 2025 até a semana 38, com pico menor (1.084
+  contra 1.854) e 12 semanas mais tarde; Rio Novo do Sul não teve notificações em 2026; 22,9%
+  dos casos de 2026 e 4,3% dos de 2025 estão abertos; a Serra lidera em casos, mas não em
+  incidência (7º e 8º lugar).
+- Decisão e motivo: tratar volume e risco como perguntas separadas e reorganizar o projeto
+  em perguntas de negócio (diagnóstico, com recomendações no fim).

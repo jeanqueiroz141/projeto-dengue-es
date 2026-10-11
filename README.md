@@ -1,8 +1,16 @@
 # Dengue no Espírito Santo: onde agir primeiro
 
 ## Objetivo
-Identificar em quais municípios do ES e para quais grupos priorizar ações
-contra a dengue, a partir de notificações do SINAN (2025 e 2026) e população do IBGE.
+Diagnosticar como a dengue se distribuiu no Espírito Santo em 2025 e 2026 (quando, onde e em quem), separando os municípios com mais casos (volume) daqueles em que o risco por habitante é maior, para apoiar a priorização de ações de prevenção e de resposta.
+
+## Perguntas de negócio
+1. **Quando?** Como a curva semanal de 2026 se compara à de 2025?
+2. **Onde?** Quais municípios concentram os casos (volume) e quais têm maior risco por habitante (incidência por 100 mil)?
+3. **Repete?** Os municípios de maior risco são os mesmos nos dois anos?
+4. **Quem?** Quais faixas etárias têm mais hospitalização e mais casos com sinais de alarme ou graves?
+5. **Piorou?** Em quais municípios a incidência aumentou de 2025 para 2026, nas mesmas semanas?
+6. **Confiável?** Qual a qualidade dos dados (casos sem classificação, abertos, tempo até o encerramento)?
+7. **Onde agir?** Como classificar os municípios por volume e risco para orientar a priorização?
 
 ## Fontes de dados
 | Fonte | Arquivo | Data do download | Link |
