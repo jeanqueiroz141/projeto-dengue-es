@@ -7,7 +7,7 @@ SELECT
 	p.populacao,
 	round(count(*) * 100000.0 / p.populacao, 1)  as incidencia_100mil
 FROM dengue.casos as c
-LEFT JOIN dengue.populacao as p
+JOIN dengue.populacao as p
 ON p.cod_municipio = c.cod_municipio
 AND p.ano = c.ano
 GROUP BY p.municipio, c.ano, p.populacao
@@ -77,10 +77,36 @@ WHERE c.cod_municipio IS NULL;
 
 ------------
 
-SELECT ano,
-       COUNT(*) AS casos,
-       SUM(CASE WHEN data_encerramento IS NULL THEN 1 ELSE 0 END) AS abertos,
-       ROUND(100.0 * SUM(CASE WHEN data_encerramento IS NULL THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_abertos,
-       ROUND(AVG(data_encerramento - data_notificacao), 1) AS media_dias_ate_encerrar
+SELECT 
+	ano,
+	COUNT(*) AS casos,
+	SUM(CASE WHEN data_encerramento IS NULL THEN 1 ELSE 0 END) AS abertos,
+	ROUND(100.0 * SUM(CASE WHEN data_encerramento IS NULL THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_abertos,
+	ROUND(AVG(data_encerramento - data_notificacao), 1) AS media_dias_ate_encerrar
 FROM dengue.vw_casos
 GROUP BY ano;
+
+------------
+
+-- Concentração de casos por município (volume)
+WITH por_municipio AS (
+    SELECT 
+		p.municipio,
+		c.ano,
+		COUNT(*) AS casos
+    FROM dengue.vw_casos as c
+    JOIN dengue.populacao as p 
+	ON p.cod_municipio = c.cod_municipio
+	AND p.ano = c.ano
+    WHERE c.semana <= 38
+    GROUP BY p.municipio, c.ano
+)
+SELECT
+	ano,
+	municipio,
+	casos,
+    ROUND(100.0 * casos / SUM(casos) OVER (PARTITION BY ano), 1) AS pct_do_total,
+    ROUND(100.0 * SUM(casos) OVER (PARTITION BY ano ORDER BY casos DESC)
+		/ SUM(casos) OVER (PARTITION BY ano), 1) AS pct_acumulado
+FROM por_municipio
+ORDER BY ano, casos DESC;
