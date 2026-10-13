@@ -81,3 +81,12 @@
   incidência (7º e 8º lugar).
 - Decisão e motivo: tratar volume e risco como perguntas separadas e reorganizar o projeto
   em perguntas de negócio (diagnóstico, com recomendações no fim).
+
+## 2026-10-09: teste dos vazios nas datas
+- O que fiz: contei os vazios de DT_NOTIFIC, DT_SIN_PRI e DT_ENCERRA antes e depois de converter
+  para data.
+- O que descobri: nas duas primeiras, nenhuma data foi perdida. Em DT_ENCERRA, 0 vazios antes e
+  5.954 depois: o arquivo não deixa o campo em branco nos casos abertos, e sim um valor que não é
+  data. Os 5.954 coincidem com os casos abertos contados no SQL (1.461 em 2025 e 4.493 em 2026).
+- Decisão e motivo: manter errors="coerce", porque esses valores não são datas e o vazio (NULL) é
+  a forma correta de representar "caso ainda não encerrado".
