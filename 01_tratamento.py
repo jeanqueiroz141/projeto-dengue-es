@@ -17,7 +17,7 @@ d26 = d26[d26["SG_UF"] == "32"].copy()
 d25["ano"] = 2025
 d26["ano"] = 2026
 dengue = pd.concat([d25, d26], ignore_index=True)
-print(dengue.shape)  
+dengue
 
 # %%
 # 3) Ajustar tipos: datas, semana epidemiológica e idade em anos
@@ -28,6 +28,10 @@ for col in ["DT_NOTIFIC", "DT_SIN_PRI", "DT_ENCERRA"]:
     print(col, "| vazios antes:", vazios_antes, "| vazios depois:", vazios_depois)
 
 dengue["semana"] = dengue["SEM_PRI"].str[4:].astype(int) 
+
+# %%
+dengue
+# %%
 
 dengue["NU_IDADE_N"] = pd.to_numeric(dengue["NU_IDADE_N"], errors="coerce")
 def idade_em_anos(codigo):
