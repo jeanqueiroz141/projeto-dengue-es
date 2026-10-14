@@ -7,11 +7,23 @@ SELECT
 	p.populacao,
 	round(count(*) * 100000.0 / p.populacao)  as incidencia_100mil
 FROM dengue.casos as c
-JOIN dengue.populacao as p
+LEFT JOIN dengue.populacao as p
 ON p.cod_municipio = c.cod_municipio
 AND p.ano = c.ano
+WHERE c.semana <= 38
 GROUP BY p.municipio, c.ano, p.populacao
 ORDER BY incidencia_100mil desc;
+
+
+-- ver o municipio que nao repetiu
+SELECT
+    p.municipio,
+    p.ano
+FROM dengue.populacao AS p
+LEFT JOIN dengue.casos AS c
+    ON c.cod_municipio = p.cod_municipio
+   	AND c.ano = p.ano
+WHERE c.cod_municipio IS NULL;
 
 -----------
 
@@ -23,6 +35,7 @@ FROM dengue.vw_casos
 WHERE semana <= 38
 GROUP BY semana
 ORDER BY semana;
+
 
 --------------
 
@@ -64,25 +77,13 @@ FROM dengue.vw_casos
 GROUP BY faixa_etaria
 ORDER BY pct_hospitalizado DESC;
 
---------
-
-SELECT
-	p.municipio,
-	p.ano
-FROM dengue.populacao p
-LEFT JOIN dengue.casos c 
-ON c.cod_municipio = p.cod_municipio
-AND c.ano = p.ano
-WHERE c.cod_municipio IS NULL;
-
 ------------
 
 SELECT 
 	ano,
 	COUNT(*) AS casos,
 	SUM(CASE WHEN data_encerramento IS NULL THEN 1 ELSE 0 END) AS abertos,
-	ROUND(100.0 * SUM(CASE WHEN data_encerramento IS NULL THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_abertos,
-	ROUND(AVG(data_encerramento - data_notificacao), 1) AS media_dias_ate_encerrar
+	ROUND(100.0 * SUM(CASE WHEN data_encerramento IS NULL THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_abertos
 FROM dengue.vw_casos
 GROUP BY ano;
 
@@ -111,11 +112,10 @@ SELECT
 FROM por_municipio
 ORDER BY ano, casos DESC;
 
-
-------------
-
 -- Período coberto por cada ano
 SELECT ano,
+	   MIN(semana) as primeira_semana,
+	   MAX(semana) as ultima_semana,
        MIN(data_sintomas)    AS primeiro_sintoma,
        MAX(data_sintomas)    AS ultimo_sintoma,
        MIN(data_notificacao) AS primeira_notificacao,
@@ -124,12 +124,11 @@ FROM dengue.casos
 GROUP BY ano
 ORDER BY ano;
 
--- Atraso de notificação: dias entre os primeiros sintomas e a notificação
-SELECT ano,
-       COUNT(*) AS casos,
-       ROUND(AVG(data_notificacao - data_sintomas), 1) AS media_dias,
-       PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY data_notificacao - data_sintomas) AS mediana_dias,
-       PERCENTILE_CONT(0.9) WITHIN GROUP (ORDER BY data_notificacao - data_sintomas) AS p90_dias
-FROM dengue.casos
-GROUP BY ano
-ORDER BY ano;
+
+
+
+
+
+
+
+

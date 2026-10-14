@@ -11,5 +11,4 @@ SELECT
     CASE WHEN data_encerramento IS NULL THEN 'Aberto' ELSE 'Encerrado' END AS situacao
 FROM dengue.casos;
 
-SELECT * FROM dengue.vw_casos LIMIT 10;
 
