@@ -5,7 +5,7 @@ SELECT
 	c.ano,
 	count(*) as casos,
 	p.populacao,
-	round(count(*) * 100000.0 / p.populacao, 1)  as incidencia_100mil
+	round(count(*) * 100000.0 / p.populacao)  as incidencia_100mil
 FROM dengue.casos as c
 JOIN dengue.populacao as p
 ON p.cod_municipio = c.cod_municipio
@@ -110,3 +110,26 @@ SELECT
 		/ SUM(casos) OVER (PARTITION BY ano), 1) AS pct_acumulado
 FROM por_municipio
 ORDER BY ano, casos DESC;
+
+
+------------
+
+-- Período coberto por cada ano
+SELECT ano,
+       MIN(data_sintomas)    AS primeiro_sintoma,
+       MAX(data_sintomas)    AS ultimo_sintoma,
+       MIN(data_notificacao) AS primeira_notificacao,
+       MAX(data_notificacao) AS ultima_notificacao
+FROM dengue.casos
+GROUP BY ano
+ORDER BY ano;
+
+-- Atraso de notificação: dias entre os primeiros sintomas e a notificação
+SELECT ano,
+       COUNT(*) AS casos,
+       ROUND(AVG(data_notificacao - data_sintomas), 1) AS media_dias,
+       PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY data_notificacao - data_sintomas) AS mediana_dias,
+       PERCENTILE_CONT(0.9) WITHIN GROUP (ORDER BY data_notificacao - data_sintomas) AS p90_dias
+FROM dengue.casos
+GROUP BY ano
+ORDER BY ano;
