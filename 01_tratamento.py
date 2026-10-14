@@ -14,6 +14,22 @@ d26 = pd.read_csv("data/DENGBR26.csv", sep=",", encoding="latin1", usecols=colun
 # 2) Filtrar o ES (código 32), marcar o ano e Juntar os dois arquivos
 d25 = d25[d25["SG_UF"] == "32"].copy()
 d26 = d26[d26["SG_UF"] == "32"].copy()
+
+# %%
+# Confere se o ano corresponde ao período da semanas epidemiologicas
+def resumo_periodo(df, nome_ano):
+    return pd.DataFrame([{
+        "ano": nome_ano,
+        "primeiro_sintoma": df["DT_SIN_PRI"].min(),
+        "ultimo_sintoma": df["DT_SIN_PRI"].max(),
+        "primeira_notificacao": df["DT_NOTIFIC"].min(),
+        "ultima_notificacao": df["DT_NOTIFIC"].max()
+    }])
+
+resumo = pd.concat([resumo_periodo(d25, 2025), resumo_periodo(d26, 2026)], ignore_index=True)
+resumo
+
+# %%
 d25["ano"] = 2025
 d26["ano"] = 2026
 dengue = pd.concat([d25, d26], ignore_index=True)
@@ -46,7 +62,8 @@ dengue["idade_anos"] = dengue["NU_IDADE_N"].apply(idade_em_anos)
 # %%
 # 4) Traduzir os códigos (os que não estão no dicionário ficam como vieram)
 dengue["CS_SEXO"] = dengue["CS_SEXO"].replace({"M": "Masculino", "F": "Feminino", "I": "Ignorado"})
-dengue["HOSPITALIZ"] = dengue["HOSPITALIZ"].replace({"1": "Sim", "2": "Não", "9": "Ignorado"})
+dengue["HOSPITALIZ"] = dengue["HOSPITALIZ"].replace({"0": "Não informado", "1": "Sim", "2": "Não",
+                                                     "9": "Ignorado"}).fillna("Não informado")
 dengue["CLASSI_FIN"] = dengue["CLASSI_FIN"].replace({"0": "Não informado", "8": "Inconclusivo",
                                                      "10": "Dengue",
                                                      "11": "Dengue com sinais de alarme",
@@ -116,3 +133,5 @@ populacao.to_csv("data/populacao_es.csv", index=False)
 # %%
 
 dengue
+
+# %%
