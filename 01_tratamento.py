@@ -22,6 +22,7 @@ dengue
 # %%
 # 3) Ajustar tipos: datas, semana epidemiológica e idade em anos
 for col in ["DT_NOTIFIC", "DT_SIN_PRI", "DT_ENCERRA"]:
+    dengue[col] = dengue[col].str.strip().replace("", pd.NA)
     vazios_antes = dengue[col].isna().sum()
     dengue[col] = pd.to_datetime(dengue[col], format="%Y%m%d", errors="coerce")
     vazios_depois = dengue[col].isna().sum()
@@ -46,15 +47,18 @@ dengue["idade_anos"] = dengue["NU_IDADE_N"].apply(idade_em_anos)
 # 4) Traduzir os códigos (os que não estão no dicionário ficam como vieram)
 dengue["CS_SEXO"] = dengue["CS_SEXO"].replace({"M": "Masculino", "F": "Feminino", "I": "Ignorado"})
 dengue["HOSPITALIZ"] = dengue["HOSPITALIZ"].replace({"1": "Sim", "2": "Não", "9": "Ignorado"})
-dengue["CLASSI_FIN"] = dengue["CLASSI_FIN"].replace({"10": "Dengue",
+dengue["CLASSI_FIN"] = dengue["CLASSI_FIN"].replace({"0": "Não informado", "8": "Inconclusivo",
+                                                     "10": "Dengue",
                                                      "11": "Dengue com sinais de alarme",
-                                                     "12": "Dengue grave"})
-dengue["CRITERIO"] = dengue["CRITERIO"].replace({"1": "Laboratório",
+                                                     "12": "Dengue grave"}).fillna("Não informado")
+dengue["CRITERIO"] = dengue["CRITERIO"].replace({"0": "Não informado", "1": "Laboratório",
                                                  "2": "Clínico-epidemiológico",
-                                                 "3": "Em investigação"})
-dengue["EVOLUCAO"] = dengue["EVOLUCAO"].replace({"1": "Cura", "2": "Óbito pelo agravo",
+                                                 "3": "Em investigação"}).fillna("Não informado")
+dengue["EVOLUCAO"] = dengue["EVOLUCAO"].replace({"0": "Não informado", "1": "Cura",
+                                                 "2": "Óbito pelo agravo",
                                                  "3": "Óbito por outras causas",
-                                                 "4": "Óbito em investigação", "9": "Ignorado"})
+                                                 "4": "Óbito em investigação",
+                                                 "9": "Ignorado"}).fillna("Não informado")
 
 # %%
 # 5) Renomear e tirar o que não precisa mais
