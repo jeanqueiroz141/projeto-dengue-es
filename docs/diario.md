@@ -59,7 +59,7 @@
 - O que fiz: criei dengue.vw_casos (códigos 0 e nulo como "Não informado", faixa etária e
   situação aberto/encerrado) e consultas de curva semanal, ranking e gravidade.
 - O que descobri: o código 8 aparece só em casos encerrados, provavelmente "Inconclusivo"
-  (fonte secundária). 5.215 casos (cerca de 10%) estão sem classificação.
+  (fonte secundária). 5.414 casos (cerca de 10%) estão sem classificação.
 - Decisão e motivo: comparar 2025 e 2026 até a semana 38, o limite dos dados de 2026.
 
 ## 2026-10-08: primeiros resultados
