@@ -1,20 +1,3 @@
--- Incidência por 100 mil: 10 maiores
-
-SELECT
-	p.municipio,
-	c.ano,
-	count(*) as casos,
-	p.populacao,
-	round(count(*) * 100000.0 / p.populacao)  as incidencia_100mil
-FROM dengue.casos as c
-LEFT JOIN dengue.populacao as p
-ON p.cod_municipio = c.cod_municipio
-AND p.ano = c.ano
-WHERE c.semana <= 38
-GROUP BY p.municipio, c.ano, p.populacao
-ORDER BY incidencia_100mil desc;
-
-
 -- ver o municipio que nao repetiu
 SELECT
     p.municipio,
@@ -35,36 +18,6 @@ FROM dengue.vw_casos
 WHERE semana <= 38
 GROUP BY semana
 ORDER BY semana;
-
-
---------------
-
-WITH taxa AS (
-    SELECT 
-		p.municipio, 
-		c.ano, 
-		COUNT(*) AS casos, 
-		p.populacao,
-        ROUND(COUNT(*) * 100000.0 / p.populacao, 1) AS incidencia_100mil
-    FROM dengue.vw_casos c
-    JOIN dengue.populacao p
-	ON p.cod_municipio = c.cod_municipio
-	AND p.ano = c.ano
-    WHERE c.semana <= 38
-    GROUP BY p.municipio, c.ano, p.populacao
-),
-ranking AS (
-    SELECT
-		*,
- 		RANK() OVER (PARTITION BY ano ORDER BY incidencia_100mil DESC) AS posicao
-    	FROM taxa
-)
-
-
-SELECT * 
-FROM ranking 
-WHERE posicao <= 10 
-ORDER BY ano, posicao;
 
 -------------
 
@@ -124,11 +77,44 @@ FROM dengue.casos
 GROUP BY ano
 ORDER BY ano;
 
+--------------
+
+-- Top 10 de incidência por ano (SE 1 a 36)
+SELECT *
+FROM dengue.vw_incidencia_municipio
+WHERE posicao <= 10
+ORDER BY ano, posicao;
 
 
+-- Repete? Correlação entre as posições de 2025 e de 2026
+SELECT ROUND(CORR(a.posicao, b.posicao)::numeric, 2) AS correlacao_posicoes,
+       COUNT(*) AS municipios
+FROM dengue.vw_incidencia_municipio a
+JOIN dengue.vw_incidencia_municipio b 
+ON b.cod_municipio = a.cod_municipio
+WHERE a.ano = 2025 AND b.ano = 2026;
 
+-- Quais municípios estão no top 10 dos dois anos?
+SELECT 
+	a.municipio,
+	a.posicao AS posicao_2025, 
+	b.posicao AS posicao_2026
+FROM dengue.vw_incidencia_municipio a
+JOIN dengue.vw_incidencia_municipio b 
+ON b.cod_municipio = a.cod_municipio
+WHERE a.ano = 2025 AND b.ano = 2026
+AND a.posicao <= 10 AND b.posicao <= 10
+ORDER BY a.posicao;
 
-
-
+-- Piorou? Variação da incidência de 2025 para 2026 (municípios com pelo menos 30 casos nos dois anos)
+SELECT a.municipio,
+       a.casos AS casos_2025, b.casos AS casos_2026,
+       a.incidencia_100mil AS incidencia_2025, b.incidencia_100mil AS incidencia_2026,
+       ROUND(b.incidencia_100mil - a.incidencia_100mil, 1) AS diferenca
+FROM dengue.vw_incidencia_municipio a
+JOIN dengue.vw_incidencia_municipio b ON b.cod_municipio = a.cod_municipio
+WHERE a.ano = 2025 AND b.ano = 2026
+  AND a.casos >= 30 AND b.casos >= 30
+ORDER BY diferenca DESC;
 
 
