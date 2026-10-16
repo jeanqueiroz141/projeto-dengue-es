@@ -117,4 +117,36 @@ WHERE a.ano = 2025 AND b.ano = 2026
   AND a.casos >= 30 AND b.casos >= 30
 ORDER BY diferenca DESC;
 
+-- Conferências de integridade
 
+-- 1) Municípios dos casos que NÃO estão na população
+SELECT DISTINCT cod_municipio 
+FROM dengue.casos
+EXCEPT
+SELECT cod_municipio 
+FROM dengue.populacao;
+
+-- 2) Casos sem população no município e ano
+SELECT COUNT(*) AS casos_sem_populacao
+FROM dengue.casos c
+LEFT JOIN dengue.populacao p
+  ON p.cod_municipio = c.cod_municipio
+  AND p.ano = c.ano
+WHERE p.cod_municipio IS NULL;
+
+-- 3) Reconciliação: o total de casos antes e depois do JOIN
+SELECT (SELECT COUNT(*) 
+		FROM dengue.casos) AS total_casos,
+       (SELECT COUNT(*)
+        FROM dengue.casos c
+        JOIN dengue.populacao p
+          ON p.cod_municipio = c.cod_municipio 
+		  AND p.ano = c.ano) AS total_com_join;
+
+-- Quantidade de municipios por ano
+
+SELECT 
+	ano, 
+	COUNT(DISTINCT cod_municipio) AS municipios
+FROM dengue.casos
+GROUP BY ano;
