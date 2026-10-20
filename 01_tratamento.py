@@ -39,16 +39,17 @@ dengue
 # 3) Ajustar tipos: datas, semana epidemiológica e idade em anos
 for col in ["DT_NOTIFIC", "DT_SIN_PRI", "DT_ENCERRA"]:
     dengue[col] = dengue[col].str.strip().replace("", pd.NA)
+    # aqui estou conferindo se há datas em ordem errada!
+    datas_erradas = (~dengue[col].str.startswith("202", na=True)).sum()
     vazios_antes = dengue[col].isna().sum()
     dengue[col] = pd.to_datetime(dengue[col], format="%Y%m%d", errors="coerce")
     vazios_depois = dengue[col].isna().sum()
-    print(col, "| vazios antes:", vazios_antes, "| vazios depois:", vazios_depois)
+    print(col, "| vazios antes:", vazios_antes, "| vazios depois:", vazios_depois,
+          "| datas erradas:", datas_erradas)
+
+# %%
 
 dengue["semana"] = dengue["SEM_PRI"].str[4:].astype(int) 
-
-# %%
-dengue
-# %%
 
 dengue["NU_IDADE_N"] = pd.to_numeric(dengue["NU_IDADE_N"], errors="coerce")
 def idade_em_anos(codigo):
@@ -129,9 +130,11 @@ dengue = dengue[["data_notificacao", "data_sintomas", "data_encerramento", "uf_r
                  "evolucao", "ano", "semana", "idade_anos"]]   # mesma ordem da tabela no SQL
 dengue.to_csv("data/dengue_es.csv", index=False)
 populacao.to_csv("data/populacao_es.csv", index=False)
-
 # %%
+#checa diferentes valores das colunas especificadas.
+# for col in ["sexo", "hospitalizado", "classificacao", "criterio", "evolucao"]:
+#     print(f"\n--- {col} ---")
+#     print(dengue[col].value_counts(dropna=False))
 
-dengue
-
-# %%
+# # vazios e valores distintos de todas as colunas, lado a lado
+# pd.DataFrame({"vazios": dengue.isna().sum(), "valores_distintos": dengue.nunique()})
