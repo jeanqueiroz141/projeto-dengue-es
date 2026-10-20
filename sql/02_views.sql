@@ -16,6 +16,7 @@ FROM dengue.casos;
 
 -- Incidência por 100 mil rankeada
 
+DROP VIEW IF EXISTS dengue.vw_incidencia_municipio;
 CREATE OR REPLACE VIEW dengue.vw_incidencia_municipio AS
 WITH taxa AS (
     SELECT p.cod_municipio,
@@ -23,6 +24,7 @@ WITH taxa AS (
            p.ano,
            COUNT(c.cod_municipio) AS casos,
            p.populacao,
+		   ROUND(COUNT(c.cod_municipio) * 100.0/ p.populacao, 2) as pct_casos,
            ROUND(COUNT(c.cod_municipio) * 100000.0 / p.populacao, 1) AS incidencia_100mil
     FROM dengue.populacao p
     LEFT JOIN dengue.vw_casos c
@@ -35,11 +37,15 @@ SELECT *,
        RANK() OVER (PARTITION BY ano ORDER BY incidencia_100mil DESC) AS posicao
 FROM taxa;
 
-------------
 
+-- 
+
+DROP VIEW IF EXISTS dengue.vw_matriz_prioridade;
 CREATE OR REPLACE VIEW dengue.vw_matriz_prioridade AS
+-- incidencia do estado todo nos 2 anos
 WITH es AS (
     SELECT ano,
+		   SUM(populacao) AS populacao_es,
            SUM(casos) AS casos_es,
            ROUND(SUM(casos) * 100000.0 / SUM(populacao), 1) AS incidencia_es
     FROM dengue.vw_incidencia_municipio
@@ -47,21 +53,24 @@ WITH es AS (
 ),
 base AS (
     SELECT m.cod_municipio, m.municipio, m.casos, m.populacao,
-           m.incidencia_100mil,
-           ROUND(100.0 * m.casos / e.casos_es, 1) AS pct_casos_es,
-           e.incidencia_es,
-           a.incidencia_100mil AS incidencia_2025
-    FROM dengue.vw_incidencia_municipio m
-    JOIN es e ON e.ano = m.ano
-    JOIN dengue.vw_incidencia_municipio a
-      ON a.cod_municipio = m.cod_municipio AND a.ano = 2025
+           ROUND(100.0 * m.casos / e.casos_es, 4) AS pct_casos_es,
+           e.incidencia_es AS incidencia_es_2026,
+           a.incidencia_100mil AS incidencia_mun_2025,
+		   m.incidencia_100mil AS incidencia_mun_2026
+    FROM dengue.vw_incidencia_municipio AS m
+    JOIN es AS e
+	ON e.ano = m.ano
+    JOIN dengue.vw_incidencia_municipio AS a
+      ON a.cod_municipio = m.cod_municipio 
+	  AND a.ano = 2025
     WHERE m.ano = 2026
 )
 SELECT *,
        CASE WHEN casos < 30 THEN 'Poucos casos (não classificado)'
-            WHEN pct_casos_es >= 2 AND incidencia_100mil > incidencia_es THEN 'Alto volume e risco acima do ES'
+            WHEN pct_casos_es >= 2 AND incidencia_mun_2026 > incidencia_es_2026 THEN 'Alto volume e risco acima do ES'
             WHEN pct_casos_es >= 2 THEN 'Alto volume, risco na média ou abaixo'
-            WHEN incidencia_100mil > incidencia_es THEN 'Baixo volume e risco acima do ES'
+            WHEN incidencia_mun_2026 > incidencia_es_2026 THEN 'Baixo volume e risco acima do ES'
             ELSE 'Baixo volume, risco na média ou abaixo' END AS quadrante,
-       CASE WHEN incidencia_100mil > incidencia_2025 THEN 'Subiu' ELSE 'Não subiu' END AS tendencia
-FROM base;
+       CASE WHEN incidencia_mun_2026 > incidencia_mun_2025 THEN 'Subiu' ELSE 'Não subiu' END AS tendencia
+FROM base
+ORDER BY incidencia_mun_2026 DESC;
